@@ -12,7 +12,7 @@ from torch.optim.lr_scheduler import StepLR
 
 from conv_lassonet import ConvLassoNet, metrics
 
-from torchvision.datasets import FashionMNIST
+from torch.utils.data import Dataset
 import torchvision.transforms as transforms
 
 batch_size = 2 ** 14
@@ -45,18 +45,42 @@ np.random.seed(551)
 # convert data to torch.FloatTensor (including scaling to [0,1])
 transform = transforms.ToTensor()
 
-class FashionMNISTDataset(FashionMNIST):
-    def __init__(self, train: bool=True):
-        super().__init__("/cluster/projects/radiomics/Temp/sejin/LassoNet", train, download=True)
+class CircleDataset(Dataset):
+    def __init__(self, x: int, y: int, r: int):
+        super().__init__()
+        self.x = x
+        self.y = y
+        self.r = r
     
-    def __getitem__(self, index: int):
-        image, label = super().__getitem__(index)
+    @staticmethod
+    def generate_noise(x, y):
+        return np.random.randn(x, y)
 
-        image = transform(image)
-        labels = torch.zeros(10)
-        labels[label] = 1.
-
-        return image, labels
+    def generate_circle(self, x, y, r, noise=False):
+        if noise:
+            canvas = self.generate_noise(x, y)
+        else:
+            canvas = np.ones((x, y))
+        
+        # random skewness w/ e^n, where n mean=0, sd=0.2
+        r_y = r * np.exp(np.random.randn(1) / 5)[0] 
+        
+        # calculate random center given x, y
+        c_x, c_y = np.random.randint(r, x-r-1), np.random.randint(r, y-r_y-1)
+        
+        # random rotation of (-30, 30) degrees
+        random_rot  = np.deg2rad(np.random.rand(1) * 60 - 30)[0]
+            
+        rr, cc = ellipse(c_x, c_y, r, r_y, rotation=random_rot)
+        canvas[rr, cc] = 0
+        
+        return canvas
+        
+    def __getitem__(self, noise: bool):
+        if noise: 
+            return self.generate_noise(self.x, self.y), 0
+        else:
+            return self.generate_circle(self.x, self.y, self.r, noise=True), 1
 
 
 def train_model(model, opt, loss, lr_schedule=None, n_epochs = 5, pretrained=None, device='cpu'):
