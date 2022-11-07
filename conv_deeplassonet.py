@@ -309,7 +309,7 @@ class ConvLassoNet(nn.Module):
             y_pred = self.forward(inputs).cpu()
             print(y_pred.max(dim=1), y_pred.min(dim=1), y_pred.shape, 'targets:', targets.shape)
             # compute loss
-            loss_val = loss(y_pred, targets)        
+            loss_val = loss(y_pred, targets.unsqueeze(1))        
             # zero gradients
             opt.zero_grad()
             # backward pass
