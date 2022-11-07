@@ -16,6 +16,7 @@ from torch.utils.data import Dataset
 import torchvision.transforms as transforms
 
 from argparse import ArgumentParser
+from skimage.draw import ellipse, rectangle
 
 parser = ArgumentParser(description='some shitters.')
 parser.add_argument('--v_', type=float, default=0.5, help='v_ ... forget what it does')
