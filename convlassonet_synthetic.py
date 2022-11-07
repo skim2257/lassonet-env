@@ -91,9 +91,9 @@ class CircleDataset(Dataset):
         
     def __getitem__(self, noise: bool):
         if noise: 
-            return torch.Tensor(self.generate_noise(self.x, self.y)), 0.
+            return torch.Tensor(self.generate_noise(self.x, self.y)), [0.]
         else:
-            return torch.Tensor(self.generate_circle(self.x, self.y, self.r, noise=True)), 1.
+            return torch.Tensor(self.generate_circle(self.x, self.y, self.r, noise=True)), [1.]
 
     def __len__(self):
         return batch_size * (2 ** 3)
