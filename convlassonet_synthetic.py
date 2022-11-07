@@ -333,7 +333,7 @@ for sparse_me in ['conv2']:
         pass
 
     ### Random
-    model_ = ConvLassoNet(lambda_=0., M=M, D_in=(28, 28), D_out=10, kernel_size=3, padding=0, sparse_layer=sparse_me).to(dev)
+    model_ = ConvLassoNet(lambda_=0., M=M, D_in=(28, 28), D_out=1, kernel_size=3, padding=0, sparse_layer=sparse_me).to(dev)
     try:
         os.makedirs(f'{plot_dir}/random')
     except:
@@ -380,7 +380,7 @@ for sparse_me in ['conv2']:
 
 
 
-    model = ConvLassoNet(lambda_=l1, M=M, D_in=(28, 28), D_out=10, kernel_size=3, padding=0, final='softmax', sparse_layer=sparse_me).to(dev)
+    model = ConvLassoNet(lambda_=l1, M=M, D_in=(28, 28), D_out=1, kernel_size=3, padding=0, final='softmax', sparse_layer=sparse_me).to(dev)
 
     opt = torch.optim.SGD(model.parameters(), lr=alpha0, momentum=momentum, nesterov=True)
     sched = StepLR(opt, step_size=1, gamma=0.9)
