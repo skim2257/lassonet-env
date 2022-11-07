@@ -90,6 +90,9 @@ class CircleDataset(Dataset):
         return canvas
         
     def __getitem__(self, noise: bool):
+        if np.random.randn() > 0:
+            noise = True
+            
         if noise: 
             return torch.Tensor(self.generate_noise(self.x, self.y)), torch.Tensor([0.])
         else:
