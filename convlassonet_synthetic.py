@@ -95,6 +95,9 @@ class CircleDataset(Dataset):
         else:
             return self.generate_circle(self.x, self.y, self.r, noise=True), 1
 
+    def __len__(self):
+        return batch_size * (2 ** 3)
+
 
 def train_model(model, opt, loss, lr_schedule=None, n_epochs = 5, pretrained=None, device='cpu'):
     if pretrained is not None:
